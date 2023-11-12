@@ -13,6 +13,7 @@ typedef struct {
 } vec;
 
 vec* vec_new(size_t data_size);
+vec* vec_new_with_capacity(size_t data_size, size_t capacity);
 int vec_push(vec** vec, void* data);
 int vec_pop(vec* vec, void* out);
 void* vec_get_at(vec* vec, size_t idx);
