@@ -1,8 +1,9 @@
 #include "vec.h"
 #include <memory.h>
+#include <stdint.h>
 #include <stdlib.h>
 
-#define VEC_INITIAL_CAP 32
+#define VEC_INITIAL_CAP 2
 
 vec* vec_new(size_t data_size) {
     vec* vec;
@@ -23,7 +24,7 @@ int vec_push(vec** vec, void* data) {
     if (len == cap) {
         void* tmp;
         cap <<= 1;
-        tmp = realloc(*vec, cap * data_size);
+        tmp = realloc(*vec, sizeof(**vec) + (cap * data_size));
         if (tmp == NULL) {
             return -1;
         }
