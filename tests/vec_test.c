@@ -103,6 +103,14 @@ START_TEST(test_remove_at) {
 }
 END_TEST
 
+START_TEST(test_invalid_capacity) {
+    vec* vec1 = vec_new_with_capacity(sizeof(int), 1);
+    vec* vec2 = vec_new_with_capacity(sizeof(int), 0);
+    ck_assert_ptr_nonnull(vec1);
+    ck_assert_ptr_nonnull(vec2);
+}
+END_TEST
+
 Suite* ht_suite() {
     Suite* s;
     TCase* tc_core;
@@ -111,6 +119,7 @@ Suite* ht_suite() {
     tcase_add_test(tc_core, test_push_pop);
     tcase_add_test(tc_core, test_get_at);
     tcase_add_test(tc_core, test_remove_at);
+    tcase_add_test(tc_core, test_invalid_capacity);
     suite_add_tcase(s, tc_core);
     return s;
 }
