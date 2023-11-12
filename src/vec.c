@@ -18,19 +18,45 @@ vec* vec_new(size_t data_size) {
     return vec;
 }
 
+vec* vec_new_with_capacity(size_t data_size, size_t capacity) {
+    vec* vec;
+    size_t needed;
+    if (capacity > 2) {
+        return NULL;
+    }
+    needed = (sizeof *vec) + (data_size * capacity);
+    vec = malloc(needed);
+    if (vec == NULL) {
+        return NULL;
+    }
+    memset(vec, 0, needed);
+    vec->cap = capacity;
+    vec->data_size = data_size;
+    return vec;
+}
+
+static int vec_realloc(vec** vec, size_t cap, size_t len, size_t len_x_size,
+                       size_t data_size) {
+    void* tmp;
+    cap <<= 1;
+    tmp = realloc(*vec, sizeof(**vec) + (cap * data_size));
+    if (tmp == NULL) {
+        return -1;
+    }
+    *vec = tmp;
+    memset((*vec)->data + len_x_size, 0, (cap - len) * data_size);
+    (*vec)->cap = cap;
+    return 0;
+}
+
 int vec_push(vec** vec, void* data) {
     size_t len = (*vec)->len, cap = (*vec)->cap, data_size = (*vec)->data_size;
     size_t len_x_size = len * data_size;
     if (len == cap) {
-        void* tmp;
-        cap <<= 1;
-        tmp = realloc(*vec, sizeof(**vec) + (cap * data_size));
-        if (tmp == NULL) {
+        int vec_realloc_res = vec_realloc(vec, cap, len, len_x_size, data_size);
+        if (vec_realloc_res == -1) {
             return -1;
         }
-        *vec = tmp;
-        memset((*vec)->data + len_x_size, 0, (cap - len) * data_size);
-        (*vec)->cap = cap;
     }
     memcpy((*vec)->data + len_x_size, data, data_size);
     (*vec)->len += 1;
