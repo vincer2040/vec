@@ -15,6 +15,8 @@ typedef struct {
 vec* vec_new(size_t data_size);
 int vec_push(vec** vec, void* data);
 int vec_pop(vec* vec, void* out);
+void* vec_get_at(vec* vec, size_t idx);
+int vec_remove_at(vec* vec, size_t idx, void* out);
 void vec_free(vec* vec, FreeFn* fn);
 
 #endif /*__VEC_H__*/

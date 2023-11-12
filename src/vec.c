@@ -48,6 +48,35 @@ int vec_pop(vec* vec, void* out) {
     return 0;
 }
 
+void* vec_get_at(vec* vec, size_t idx) {
+    size_t len = vec->len, data_size = vec->data_size;
+    if (idx >= len) {
+        return NULL;
+    }
+    return vec->data + (idx * data_size);
+}
+
+int vec_remove_at(vec* vec, size_t idx, void* out) {
+    size_t idx_x_size, new_len, new_len_x_size, len = vec->len,
+                                                data_size = vec->data_size;
+    if (idx >= len) {
+        return -1;
+    }
+    idx_x_size = idx * data_size;
+    new_len = len - 1;
+    vec->len--;
+    memcpy(out, vec->data + idx_x_size, data_size);
+    if (new_len == idx) {
+        memset(vec->data + idx_x_size, 0, data_size);
+        return 0;
+    }
+    new_len_x_size = new_len * data_size;
+    memmove(vec->data + idx_x_size, vec->data + ((idx + 1) * data_size),
+            new_len_x_size);
+    memset(vec->data + new_len_x_size, 0, data_size);
+    return 0;
+}
+
 void vec_free(vec* vec, FreeFn* fn) {
     if (fn) {
         size_t i, len = vec->len, data_size = vec->data_size;
