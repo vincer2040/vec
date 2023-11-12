@@ -114,3 +114,43 @@ void vec_free(vec* vec, FreeFn* fn) {
     }
     free(vec);
 }
+
+vec_iter vec_iter_new(vec* vec) {
+    vec_iter iter = {0};
+    ssize_t len = vec->len - 1;
+    size_t data_size = vec->data_size;
+    if (vec->len == 0) {
+        iter.cur = NULL;
+        iter.next = NULL;
+        iter.next_idx = 1;
+        iter.end_idx = len;
+        iter.vec = vec;
+    }
+
+    if (vec->len == 1) {
+        iter.cur = vec->data;
+        iter.next = NULL;
+        iter.next_idx = 1;
+        iter.end_idx = len;
+        iter.vec = vec;
+    }
+
+    iter.cur = vec->data;
+    iter.next = vec->data + data_size;
+    iter.next_idx = 1;
+    iter.end_idx = len;
+    iter.vec = vec;
+
+    return iter;
+}
+
+void vec_iter_next(vec_iter* iter) {
+    size_t data_size = iter->vec->data_size;
+    iter->next_idx++;
+    iter->cur = iter->next;
+    if (iter->next_idx > iter->end_idx) {
+        iter->next = NULL;
+    } else {
+        iter->next = iter->vec->data + (data_size * iter->next_idx);
+    }
+}

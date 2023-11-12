@@ -111,6 +111,29 @@ START_TEST(test_invalid_capacity) {
 }
 END_TEST
 
+START_TEST(test_iter) {
+    vec* vec = vec_new(sizeof(int));
+    vec_iter iter;
+    int exps[] = {0, 1, 2, 3, 4, 5};
+    size_t i, len = sizeof exps / sizeof exps[0];
+    int* cur;
+    setup(&vec);
+
+    iter = vec_iter_new(vec);
+
+    for (i = 0; i < len; ++i) {
+        int exp = exps[i];
+        cur = iter.cur;
+        ck_assert_ptr_nonnull(cur);
+        ck_assert_int_eq(*cur, exp);
+        vec_iter_next(&iter);
+    }
+    vec_iter_next(&iter);
+    cur = iter.cur;
+    ck_assert_ptr_null(cur);
+}
+END_TEST
+
 Suite* ht_suite() {
     Suite* s;
     TCase* tc_core;
@@ -120,6 +143,7 @@ Suite* ht_suite() {
     tcase_add_test(tc_core, test_get_at);
     tcase_add_test(tc_core, test_remove_at);
     tcase_add_test(tc_core, test_invalid_capacity);
+    tcase_add_test(tc_core, test_iter);
     suite_add_tcase(s, tc_core);
     return s;
 }
