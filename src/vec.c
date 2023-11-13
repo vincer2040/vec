@@ -104,6 +104,19 @@ int vec_remove_at(vec* vec, size_t idx, void* out) {
     return 0;
 }
 
+ssize_t vec_find(vec* vec, void* cmp_data, void* out, CmpFn* fn) {
+    size_t i, len = vec->len, data_size = vec->data_size;
+    for (i = 0; i < len; ++i) {
+        void* at = vec->data + (i * data_size);
+        int cmp_res = fn(cmp_data, at);
+        if (cmp_res == 0) {
+            memcpy(out, at, data_size);
+            return i;
+        }
+    }
+    return -1;
+}
+
 void vec_free(vec* vec, FreeFn* fn) {
     if (fn) {
         size_t i, len = vec->len, data_size = vec->data_size;

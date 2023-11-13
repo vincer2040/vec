@@ -5,6 +5,7 @@
 #include <sys/types.h>
 
 typedef void FreeFn(void* a);
+typedef int CmpFn(void* a, void* b);
 
 typedef struct {
     size_t len;
@@ -27,6 +28,7 @@ int vec_push(vec** vec, void* data);
 int vec_pop(vec* vec, void* out);
 void* vec_get_at(vec* vec, size_t idx);
 int vec_remove_at(vec* vec, size_t idx, void* out);
+ssize_t vec_find(vec* vec, void* cmp_data, void* out, CmpFn* fn);
 void vec_free(vec* vec, FreeFn* fn);
 
 vec_iter vec_iter_new(vec* vec);

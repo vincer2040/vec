@@ -15,6 +15,12 @@ void setup(vec** vec) {
     vec_push(vec, &a5);
 }
 
+int cmp(void* a, void* b) {
+    int ai = *(int*)a;
+    int bi = *(int*)b;
+    return ai - bi;
+}
+
 START_TEST(test_push_pop) {
     vec* vec = vec_new(sizeof(int));
     int out;
@@ -111,6 +117,23 @@ START_TEST(test_invalid_capacity) {
 }
 END_TEST
 
+START_TEST(test_vec_find) {
+    vec* vec = vec_new(sizeof(int));
+    int cmp_against0 = 3, cmp_against1 = 10;
+    int out;
+    ssize_t find;
+    setup(&vec);
+
+    find = vec_find(vec, &cmp_against0, &out, cmp);
+    ck_assert_int_eq(find, 3);
+    ck_assert_int_eq(out, 3);
+
+    find = vec_find(vec, &cmp_against1, &out, cmp);
+    ck_assert_int_eq(find, -1);
+    vec_free(vec, NULL);
+}
+END_TEST
+
 START_TEST(test_iter) {
     vec* vec = vec_new(sizeof(int));
     vec_iter iter;
@@ -131,6 +154,7 @@ START_TEST(test_iter) {
     vec_iter_next(&iter);
     cur = iter.cur;
     ck_assert_ptr_null(cur);
+    vec_free(vec, NULL);
 }
 END_TEST
 
@@ -142,6 +166,7 @@ Suite* ht_suite() {
     tcase_add_test(tc_core, test_push_pop);
     tcase_add_test(tc_core, test_get_at);
     tcase_add_test(tc_core, test_remove_at);
+    tcase_add_test(tc_core, test_vec_find);
     tcase_add_test(tc_core, test_invalid_capacity);
     tcase_add_test(tc_core, test_iter);
     suite_add_tcase(s, tc_core);
