@@ -36,4 +36,14 @@ constexpr const vec_type& VecType() {
     }                                                                          \
     VEC_INLINE_ALWAYS inline Type* at(vec& v, size_t index) {                  \
         return vec##_at(&v, index);                                            \
+    }                                                                          \
+    VEC_INLINE_ALWAYS inline std::vector<Type> collect(vec& v) {               \
+        std::vector<Type> res;                                                 \
+        Type* data = vec##_data(&v);                                           \
+        size_t size = vec##_size(&v);                                          \
+        res.reserve(size);                                                     \
+        for (size_t i = 0; i < size; ++i) {                                    \
+            res.push_back(data[i]);                                            \
+        }                                                                      \
+        return res;                                                            \
     }

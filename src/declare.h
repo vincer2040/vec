@@ -18,7 +18,7 @@
         vec_raw vec;                                                           \
     } vec_;                                                                    \
     static inline vec_ vec_##_new(void) {                                      \
-        vec_ self = {0};                                                 \
+        vec_ self = {0};                                                       \
         self.vec = vec_raw_new(&self.buf, capacity);                           \
         return self;                                                           \
     }                                                                          \
@@ -28,24 +28,45 @@
     static inline size_t vec_##_size(vec_* self) {                             \
         return vec_raw_size(&vtype, &self->vec);                               \
     }                                                                          \
-    static inline size_t vec##_capacity(vec_* self) {                          \
+    static inline size_t vec_##_capacity(vec_* self) {                         \
         return vec_raw_capacity(&vtype, &self->vec);                           \
     }                                                                          \
     static inline bool vec_##_empty(vec_* self) {                              \
         return vec_raw_empty(&vtype, &self->vec);                              \
     }                                                                          \
-    static inline void vec_##_push_back(vec_* self, const Type* value) {       \
-        vec_raw_push_back(&vtype, &self->vec, value);                          \
+    static inline void vec_##_reserve(vec_* self, size_t new_capacity) {       \
+        vec_raw_reserve(&vtype, &self->vec, new_capacity);                     \
     }                                                                          \
     static inline Type* vec_##_find(vec_* self, const Type* value) {           \
         return (Type*)vec_raw_find(&vtype, &self->vec, value);                 \
     }                                                                          \
-    static inline Type* vec_##_at(vec_* self, size_t index) {                  \
+    static inline Type* vec_##_at(const vec_* self, size_t index) {            \
         return (Type*)vec_raw_at(&vtype, &self->vec, index);                   \
+    }                                                                          \
+    static inline Type* vec_##_at_unchecked(const vec_* self, size_t index) {  \
+        return (Type*)vec_raw_at_unchecked(&vtype, &self->vec, index);         \
+    }                                                                          \
+    static inline Type* vec_##_first(const vec_* self) {                       \
+        return (Type*)vec_raw_first(&vtype, &self->vec);                       \
+    }                                                                          \
+    static inline Type* vec_##_back(const vec_* self) {                        \
+        return (Type*)vec_raw_back(&vtype, &self->vec);                        \
+    }                                                                          \
+    static inline Type* vec_##_data(const vec_* self) {                        \
+        return (Type*)vec_raw_data(&vtype, &self->vec);                        \
     }                                                                          \
     static inline void vec_##_clear(vec_* self) {                              \
         vec_raw_clear(&vtype, &self->vec);                                     \
         (*self).vec = vec_raw_new(self->buf, capacity);                        \
+    }                                                                          \
+    static inline void vec_##_push_back(vec_* self, const Type* value) {       \
+        vec_raw_push_back(&vtype, &self->vec, value);                          \
+    }                                                                          \
+    static inline void vec_##_pop_back(vec_* self, Type* out) {                \
+        vec_raw_pop_back(&vtype, &self->vec, out);                             \
+    }                                                                          \
+    static inline void vec_##_erase(vec_* self, size_t index) {                \
+        vec_raw_erase(&vtype, &self->vec, index);                              \
     }
 
 #endif /* __VEC_DECLARE_H__ */
