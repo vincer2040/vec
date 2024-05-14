@@ -11,12 +11,47 @@ typedef struct {
     size_t capacity;
 } vec_raw;
 
+typedef struct {
+    vec_raw* vec;
+    char* slot;
+    size_t pos;
+} vec_raw_iter;
+
 VEC_INLINE_ALWAYS static inline void vec_raw_insert(const vec_type* type,
                                                     vec_raw* self,
                                                     const void* value,
                                                     size_t index) {
     type->obj->copy(self->buf + (index * type->obj->size), value);
     self->length++;
+}
+
+static inline vec_raw_iter vec_raw_iter_at(const vec_type* type, vec_raw* self,
+                                           size_t pos) {
+    if (pos >= self->length) {
+        return {self, NULL, pos};
+    }
+    char* buf = self->buf + pos * type->obj->size;
+    return {self, buf, pos};
+}
+
+static inline vec_raw_iter vec_raw_iter_new(const vec_type* type,
+                                            vec_raw* self) {
+    return vec_raw_iter_at(type, self, 0);
+}
+
+static inline bool vec_raw_iter_next(const vec_type* type, vec_raw_iter* it) {
+    it->pos++;
+    if (it->pos >= it->vec->length) {
+        it->slot = NULL;
+        return false;
+    }
+    it->slot = it->slot + type->obj->size;
+    return true;
+}
+
+static inline char* vec_raw_iter_get(const vec_type* type,
+                                     const vec_raw_iter* it) {
+    return it->slot;
 }
 
 static inline vec_raw vec_raw_new(void* buf, size_t capacity) {

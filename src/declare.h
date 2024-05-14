@@ -17,6 +17,9 @@
         Type buf[capacity];                                                    \
         vec_raw vec;                                                           \
     } vec_;                                                                    \
+    typedef struct {                                                           \
+        vec_raw_iter it;                                                       \
+    } vec_##_iter;                                                             \
     static inline vec_ vec_##_new(void) {                                      \
         vec_ self = {0};                                                       \
         self.vec = vec_raw_new(&self.buf, capacity);                           \
@@ -36,6 +39,15 @@
     }                                                                          \
     static inline void vec_##_reserve(vec_* self, size_t new_capacity) {       \
         vec_raw_reserve(&vtype, &self->vec, new_capacity);                     \
+    }                                                                          \
+    static inline vec_##_iter vec_##_iter_new(vec_* self) {                    \
+        return (vec_##_iter){vec_raw_iter_new(&vtype, &self->vec)};            \
+    }                                                                          \
+    static inline Type* vec_##_iter_get(const vec_##_iter* it) {               \
+        return (Type*)vec_raw_iter_get(&vtype, &it->it);                       \
+    }                                                                          \
+    static inline bool vec_##_iter_next(vec_##_iter* it) {                     \
+        return vec_raw_iter_next(&vtype, &it->it);                             \
     }                                                                          \
     static inline Type* vec_##_find(vec_* self, const Type* value) {           \
         return (Type*)vec_raw_find(&vtype, &self->vec, value);                 \

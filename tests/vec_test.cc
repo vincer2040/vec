@@ -215,3 +215,26 @@ TEST(Vector, Erase) {
     }
     int_vec_destory(&vec);
 }
+
+TEST(Vector, Iterator) {
+    int_vec vec = int_vec_new();
+    int to_push[] = {0, 1, 2, 3, 4, 5};
+    for (auto it : to_push) {
+        push(vec, it);
+    }
+
+    size_t len = sizeof to_push / sizeof to_push[0];
+
+    int_vec_iter it = int_vec_iter_new(&vec);
+    size_t i = 0;
+    while (int_vec_iter_get(&it)) {
+        int expected = to_push[i];
+        int* got = int_vec_iter_get(&it);
+        EXPECT_TRUE(got);
+        EXPECT_EQ(*got, expected);
+        int_vec_iter_next(&it);
+        i++;
+    }
+    EXPECT_FALSE(int_vec_iter_next(&it));
+    EXPECT_EQ(i, len);
+}
